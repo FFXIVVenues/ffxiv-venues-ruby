@@ -10,6 +10,7 @@ GEM
     discordrb-webhooks (3.5.0)
       rest-client (>= 2.0.0)
     domain_name (0.6.20231109)
+    dotenv (2.8.1)
     event_emitter (0.2.6)
     ffi (1.16.3)
     http-accept (1.7.0)
@@ -33,9 +34,11 @@ GEM
 
 PLATFORMS
   arm64-darwin-23
+  x86_64-linux
 
 DEPENDENCIES
   discordrb
+  dotenv
 
 BUNDLED WITH
    2.4.10

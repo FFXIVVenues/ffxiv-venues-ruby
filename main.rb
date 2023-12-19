@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 require 'discordrb'
+require 'dotenv'
+
+Dotenv.load ".env"
+Dotenv.overload ".env.local"
+
+@discord_token = ENV['DISCORD_TOKEN']
+@discord_client_id = ENV['DISCORD_CLIENT_ID']
 
 channels = {}
 
 bot = Discordrb::Bot.new(
-  token: "",
-  client_id: 1089575842516041738, fancy_log: true,
+  token: @discord_token,
+  client_id: @discord_client_id, fancy_log: true,
   intents: [ :server_messages ])
 
 
