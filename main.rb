@@ -64,7 +64,7 @@ bot.application_command :anchor do
   embed = Discordrb::Webhooks::Embed.new(description: content)
   command.respond embed:{ anchored: embed }
 end
-# End Pinning
+# End Anchoring
 
 
 
