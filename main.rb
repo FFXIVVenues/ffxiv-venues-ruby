@@ -38,18 +38,6 @@ bot.application_command :autothread do
     command.respond content: "Okay, I won't create threads here anymore. 🥲", ephemeral: true
   end
 end
-# End AutoThreading
-
-# Begin Pinning
-bot.register_application_command :anchor, "Enable anchoring a notice to the bottom of this channel." do
-  |interaction|
-  interaction.string "anchor_content", "The text content of the anchored message."
-end
-
-bot.application_command :anchor do
-  #todo
-end
-# End Pinning
 
 bot.message do |event|
   channel_id = event.channel.id
@@ -58,6 +46,29 @@ bot.message do |event|
 
   event.channel.start_thread title, 10080, message: event.message
 end
+# End AutoThreading
+
+
+
+
+
+# Begin Anchoring
+bot.register_application_command :anchor, "Enable anchoring a notice to the bottom of this channel." do
+  |interaction|
+  interaction.string "anchor_content", "The text content of the anchored message."
+end
+
+bot.application_command :anchor do
+  |command|
+  content = command.options["anchor_content"]
+  embed = Discordrb::Webhooks::Embed.new(description: content)
+  command.respond embed:{ anchored: embed }
+end
+# End Pinning
+
+
+
+
 
 bot.ready do
   Discordrb::LOGGER.info "Ruby is online!"
