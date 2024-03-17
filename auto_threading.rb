@@ -3,9 +3,12 @@
 class AutoThreading
   attr_accessor :channels_to_thread
 
-  def initialize(bot)
-    @channels_to_thread = {}
+  CHANNELS_TO_THREAD_FILE_NAME = 'autothreading.channels_to_thread'
+
+  def initialize(bot, storage)
     @bot = bot
+    @storage = storage
+    @channels_to_thread = @storage.read CHANNELS_TO_THREAD_FILE_NAME
 
     @bot.register_application_command(:autothread, "Enable creating a thread on each message posted in this channel.") do | interaction|
       interaction.string "thread_name", "The name to use for all automatically created threads.", required: true
@@ -28,6 +31,7 @@ class AutoThreading
       @channels_to_thread.delete channel_id
       command.respond content: "Okay, I won't create threads here anymore. 🥲", ephemeral: true
     end
+    save
   end
 
   def on_message(event)
@@ -36,5 +40,11 @@ class AutoThreading
     return unless title
 
     event.channel.start_thread(title, 10080, message: event.message)
+  end
+
+  private
+
+  def save
+    @storage.write CHANNELS_TO_THREAD_FILE_NAME, @channels_to_thread
   end
 end
