@@ -20,8 +20,7 @@ bot = Discordrb::Bot.new(
 channels_to_thread = {}
 
 bot.register_application_command :autothread,
-                             "Enabled creating a thread on each message posted in this channel." do
-  |interaction|
+                             "Enabled creating a thread on each message posted in this channel." do |interaction|
   interaction.string "thread_name", "The name to use for all automatically created threads.", required: true
 end
 
@@ -83,6 +82,7 @@ bot.message do |event|
   unless previous_anchor_id.nil?
     previous_anchor = event.channel.get_message previous_anchor_id
     event.channel.delete_message previous_anchor
+  end
 
   event.channel.send_message "", embed: {}
 end
