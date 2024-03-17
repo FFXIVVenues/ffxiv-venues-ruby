@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  ruby:
+    container_name: FFXIVVenues.Ruby
+    image: ffxivvenues/ffxivvenues.ruby:latest
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - STORAGE_PATH=/var/lib/ffxivvenues.ruby/data
+    volumes:
+      - FFXIVVenues.Ruby.Volume:/var/lib/ffxivvenues.ruby/data
+
+volumes:
+  FFXIVVenues.Ruby.Volume:

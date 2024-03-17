@@ -9,15 +9,25 @@ require_relative 'auto_threading'
 require_relative 'storage'
 
 Dotenv.load ".env"
-Dotenv.overload ".env.local"
 
 @discord_token = ENV['DISCORD_TOKEN']
 @discord_client_id = ENV['DISCORD_CLIENT_ID']
-@storage_path = ENV['STORAGE_PATH']
+@storage_path = ENV['STORAGE_PATH'] || ".data/"
+
+if @discord_client_id.nil? || @discord_client_id.strip.empty?
+  Discordrb::LOGGER.error "No discord client id provided, populate the 'DISCORD_CLIENT_ID' environment variable with a client id."
+  exit 1
+end
+
+if @discord_token.nil? || @discord_token.strip.empty?
+  Discordrb::LOGGER.error "No discord token provided, populate the 'DISCORD_TOKEN' environment variable with a token."
+  exit 2
+end
 
 bot = Discordrb::Bot.new(
   token: @discord_token,
-  client_id: @discord_client_id, fancy_log: true,
+  client_id: @discord_client_id,
+  fancy_log: true,
   intents: [ :server_messages ])
 storage = Storage.new @storage_path
 debouncer = Debouncer.new
@@ -32,5 +42,3 @@ end
 at_exit { bot.stop }
 
 bot.run
-
-
