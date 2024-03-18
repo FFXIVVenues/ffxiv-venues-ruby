@@ -20,3 +20,4 @@ networks:
 
 volumes:
   FFXIVVenues.Ruby.Volume:
+    name: FFXIVVenues.Ruby.Volume

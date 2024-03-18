@@ -75,7 +75,7 @@ class Anchoring
 
     Discordrb::LOGGER.info "Message received on anchored channel #{channel_id}"
 
-    @debouncer.debounce("anchor_" + channel_id.to_s, 5) do
+    @debouncer.debounce("anchor_" + channel_id.to_s, 30) do
       Discordrb::LOGGER.info "Anchoring message in channel #{channel_id}"
 
       previous_anchor_id = @previous_anchors[channel_id]
