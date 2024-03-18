@@ -81,14 +81,16 @@ class Anchoring
       previous_anchor_id = @previous_anchors[channel_id]
       unless previous_anchor_id.nil?
         previous_anchor = event.channel.load_message(previous_anchor_id)
-        event.channel.delete_message(previous_anchor)
+        event.channel.delete_message(previous_anchor) unless previous_anchor.nil?
       end
 
       message = event.channel.send_embed do |embed|
         embed.description = content
       end
       @previous_anchors[channel_id] = message.id
+
       save
+
     end
   end
 
