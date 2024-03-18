@@ -14,7 +14,7 @@ class Anchoring
     @channels_to_anchor = @storage.read CHANNELS_TO_ANCHOR_FILE_NAME
     @previous_anchors = @storage.read PREVIOUS_ANCHORS_FILE_NAME
 
-    @bot.register_application_command :anchor, "Enable anchoring a notice to the bottom of this channel." do |interaction|
+    @bot.register_application_command :anchor, "Enable anchoring a notice to the bottom of this channel.", default_permission: false do |interaction|
       interaction.string "anchor_content", "The text content of the anchored message.", required: false
     end
 

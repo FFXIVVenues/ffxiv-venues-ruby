@@ -2,7 +2,6 @@
 
 require 'discordrb'
 require 'dotenv'
-require 'time'
 require_relative 'debouncer'
 require_relative 'anchoring'
 require_relative 'auto_threading'

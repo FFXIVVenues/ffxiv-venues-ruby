@@ -10,7 +10,7 @@ class AutoThreading
     @storage = storage
     @channels_to_thread = @storage.read CHANNELS_TO_THREAD_FILE_NAME
 
-    @bot.register_application_command(:autothread, "Enable creating a thread on each message posted in this channel.") do | interaction|
+    @bot.register_application_command :autothread, "Enable creating a thread on each message posted in this channel.", default_permission: false do | interaction|
       interaction.string "thread_name", "The name to use for all automatically created threads.", required: true
     end
 
