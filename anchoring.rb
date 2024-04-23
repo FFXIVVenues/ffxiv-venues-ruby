@@ -55,6 +55,10 @@ class Anchoring
     @channels_to_anchor[channel_id] = content
     event.respond content: "Oki, I'll anchor that message here! 🥰", ephemeral: true
     save
+
+    @debouncer.debounce("anchor_" + channel_id.to_s, 2) do
+      anchor_message(content, event.channel)
+    end
   end
 
   def on_modal_submit(event)
@@ -68,6 +72,10 @@ class Anchoring
     @channels_to_anchor[channel_id] = content
     event.respond content: "Oki, I'll anchor that message here! 🥰", ephemeral: true
     save
+
+    @debouncer.debounce("anchor_" + channel_id.to_s, 2) do
+      anchor_message(content, event.channel)
+    end
   end
 
   def on_message(event)
@@ -78,25 +86,28 @@ class Anchoring
     Discordrb::LOGGER.info "Message received on anchored channel #{channel_id}"
 
     @debouncer.debounce("anchor_" + channel_id.to_s, 30) do
-      Discordrb::LOGGER.info "Anchoring message in channel #{channel_id}"
-
-      previous_anchor_id = @previous_anchors[channel_id]
-      unless previous_anchor_id.nil?
-        previous_anchor = event.channel.load_message(previous_anchor_id)
-        event.channel.delete_message(previous_anchor) unless previous_anchor.nil?
-      end
-
-      message = event.channel.send_embed do |embed|
-        embed.description = content
-      end
-      @previous_anchors[channel_id] = message.id
-
-      save
-
+      anchor_message(content, event.channel)
     end
   end
 
   private
+
+  def anchor_message(content, channel)
+    Discordrb::LOGGER.info "Anchoring message in channel #{channel.id}"
+
+    previous_anchor_id = @previous_anchors[channel.id]
+    unless previous_anchor_id.nil?
+      previous_anchor = channel.load_message(previous_anchor_id)
+      channel.delete_message(previous_anchor) unless previous_anchor.nil?
+    end
+
+    message = channel.send_embed do |embed|
+      embed.description = content
+    end
+    @previous_anchors[channel.id] = message.id
+
+    save
+  end
 
   def save
     @storage.write PREVIOUS_ANCHORS_FILE_NAME, @previous_anchors
