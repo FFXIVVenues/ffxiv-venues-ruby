@@ -19,8 +19,8 @@ class Random
     max_inputted = !max_number.nil?
     max_number = 999 unless max_inputted
     random_number = rand(0..max_number)
-    event.respond content: "Random! #{event.user.nickname} rolls a 🎲#{random_number} (out of #{max_number})." if (max_inputted)
-    event.respond content: "Random! #{event.user.nickname} rolls a 🎲#{random_number}." unless (max_inputted)
+    event.respond content: "Random! #{event.user.nickname || event.user.global_name} rolls a 🎲#{random_number} (out of #{max_number})." if (max_inputted)
+    event.respond content: "Random! #{event.user.nickname || event.user.global_name} rolls a 🎲#{random_number}." unless (max_inputted)
   end
 
 end
