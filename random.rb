@@ -19,7 +19,7 @@ class Random
   def on_command(event)
     Discordrb::LOGGER.info "Executing application command 'random'"
 
-    max_number = event.options["max_number"]
+    max_number = event.options["upper_limit"]
     max_inputted = !max_number.nil?
     min_number = max_inputted ? 1 : 0
     max_number = 999 unless max_inputted
