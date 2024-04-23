@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+module FFXIVVenues
+
 class AutoThreading
   attr_accessor :channels_to_thread
 
@@ -47,4 +49,6 @@ class AutoThreading
   def save
     @storage.write CHANNELS_TO_THREAD_FILE_NAME, @channels_to_thread
   end
+end
+
 end

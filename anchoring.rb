@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+module FFXIVVenues
+
 class Anchoring
   attr_accessor :channels_to_anchor, :previous_anchors
 
@@ -100,5 +102,7 @@ class Anchoring
     @storage.write PREVIOUS_ANCHORS_FILE_NAME, @previous_anchors
     @storage.write CHANNELS_TO_ANCHOR_FILE_NAME, @channels_to_anchor
   end
+
+end
 
 end

@@ -3,6 +3,7 @@
 require 'discordrb'
 require 'dotenv'
 require_relative 'debouncer'
+require_relative 'random'
 require_relative 'anchoring'
 require_relative 'auto_threading'
 require_relative 'storage'
@@ -31,8 +32,9 @@ bot = Discordrb::Bot.new(
 storage = Storage.new @storage_path
 debouncer = Debouncer.new
 
-Anchoring.new bot, debouncer, storage
-AutoThreading.new bot, storage
+FFXIVVenues::Anchoring.new bot, debouncer, storage
+FFXIVVenues::AutoThreading.new bot, storage
+FFXIVVenues::Random.new bot
 
 bot.ready do
   Discordrb::LOGGER.info "Ruby is online!"
