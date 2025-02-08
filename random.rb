@@ -4,6 +4,8 @@ module FFXIVVenues
 
 class Random
   def initialize(bot)
+    Discordrb::LOGGER.info "Initializing command 'random'"
+
     @bot = bot
 
     @bot.register_application_command :random, "Displays a random number between 0 and 999 in the current chat channel.", default_permission: false do |interaction|

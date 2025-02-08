@@ -1,12 +1,17 @@
 Ruby Ki is a discord Utility bot for FFXIV Venues.
 
-## Running Ruby Ki
+Use this link to add Ruby Ki to your discord server:
+https://discord.com/oauth2/authorize?client_id=1089699861143769131&permissions=309237663744&integration_type=0&scope=bot+applications.commands
 
+## Running Ruby Ki yourself
+Run Ruby Ki via the provided docker-compose.yml file with a `.env` file and the following environment variables:
 
-Run Ruby Ki via the provided docker-compose.yml file with a `.env` file
+- DISCORD_TOKEN
+- DISCORD_CLIENT_ID
+- STORAGE_PATH
 
-
-
-DISCORD_TOKEN
-DISCORD_CLIENT_ID
-STORAGE_PATH
+## Required Discord permissions
+- Send Messages
+- Send Messages in Threads
+- Create Public Threads
+- Embed Links

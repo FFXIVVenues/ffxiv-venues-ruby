@@ -7,6 +7,7 @@ require_relative 'random'
 require_relative 'anchoring'
 require_relative 'auto_threading'
 require_relative 'storage'
+require_relative 'minesweep'
 
 Dotenv.load ".env"
 
@@ -35,6 +36,7 @@ debouncer = Debouncer.new
 FFXIVVenues::Anchoring.new bot, debouncer, storage
 FFXIVVenues::AutoThreading.new bot, storage
 FFXIVVenues::Random.new bot
+FFXIVVenues::Minesweep.new bot
 
 bot.ready do
   Discordrb::LOGGER.info "Ruby is online!"

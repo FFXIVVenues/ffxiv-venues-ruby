@@ -8,6 +8,8 @@ class AutoThreading
   CHANNELS_TO_THREAD_FILE_NAME = 'autothreading.channels_to_thread'
 
   def initialize(bot, storage)
+    Discordrb::LOGGER.info "Initializing command 'autothread'"
+
     @bot = bot
     @storage = storage
     @channels_to_thread = @storage.read CHANNELS_TO_THREAD_FILE_NAME

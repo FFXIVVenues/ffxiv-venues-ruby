@@ -9,6 +9,8 @@ class Anchoring
   PREVIOUS_ANCHORS_FILE_NAME = 'anchoring.previous_anchors'
 
   def initialize(bot, debouncer, storage)
+    Discordrb::LOGGER.info "Initializing command 'anchor'"
+
     @bot = bot
     @debouncer = debouncer
     @storage = storage
