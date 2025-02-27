@@ -3,11 +3,12 @@
 require 'discordrb'
 require 'dotenv'
 require_relative 'debouncer'
-require_relative 'random'
-require_relative 'anchoring'
-require_relative 'auto_threading'
 require_relative 'storage'
-require_relative 'minesweep'
+require_relative 'commands/random'
+require_relative 'commands/anonymise'
+require_relative 'commands/anchoring'
+require_relative 'commands/auto_threading'
+require_relative 'commands/minesweep'
 
 Dotenv.load ".env"
 
@@ -33,6 +34,7 @@ bot = Discordrb::Bot.new(
 storage = Storage.new @storage_path
 debouncer = Debouncer.new
 
+FFXIVVenues::Anonymise.new bot, debouncer, storage
 FFXIVVenues::Anchoring.new bot, debouncer, storage
 FFXIVVenues::AutoThreading.new bot, storage
 FFXIVVenues::Random.new bot

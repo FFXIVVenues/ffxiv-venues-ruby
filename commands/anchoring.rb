@@ -66,7 +66,7 @@ class Anchoring
   def on_modal_submit(event)
     return unless event.custom_id == 'anchor_modal'
 
-    Discordrb::LOGGER.info "Processing anchor modal submission"
+    Discordrb::LOGGER.info "Processing 'anchor' modal submission"
 
     channel_id = event.channel_id
     content = event.value 'anchor_content'

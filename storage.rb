@@ -15,8 +15,12 @@ class Storage
     File.open("#{@path}#{file_name}.yaml", 'w') { |file| file.write(data.to_yaml) }
   end
 
-  def read(file_name)
-    return {} unless File.exist?("#{@path}#{file_name}.yaml")
+  def append(file_name, data)
+    File.open("#{@path}#{file_name}.yaml", 'a') { |file| file.write(data.to_yaml.sub "---\n", "") }
+  end
+
+  def read(file_name, default = {})
+    return default unless File.exist?("#{@path}#{file_name}.yaml")
     YAML.load_file("#{@path}#{file_name}.yaml")
   end
 
