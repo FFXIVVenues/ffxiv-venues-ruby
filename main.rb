@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "logger"
 require 'discordrb'
 require 'dotenv'
 require_relative 'debouncer'

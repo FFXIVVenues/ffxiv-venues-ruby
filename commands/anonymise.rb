@@ -8,18 +8,48 @@ class Anonymise
 
   CHANNELS_FOR_ANONYMITY_FILE_NAME = 'anonymous.channels_to_anon'
   PREVIOUS_ANCHORS_FILE_NAME = 'anonymous.previous_anchors'
-  ANOMYMOUS_NAMES = [
-    "Abyssinian Cat", "American Bobtail Cat", "American Curl Cat", "American Shorthair Cat", "American Wirehair Cat", "Balinese Cat", "Bengal Cat", "Birman Cat", "Bombay Cat", "British Shorthair Cat",
-    "Burmese Cat", "Burmilla Cat", "Chartreux Cat", "Chausie Cat", "Cornish Rex Cat", "Cymric Cat", "Devon Rex Cat", "Egyptian Mau Cat", "European Burmese Cat", "Exotic Shorthair Cat",
-    "Havana Brown Cat", "Himalayan Cat", "Japanese Bobtail Cat", "Javanese Cat", "Khao Manee Cat", "Korat Cat", "Kurilian Bobtail Cat", "LaPerm Cat", "Lykoi Cat", "Maine Coon Cat",
-    "Manx Cat", "Munchkin Cat", "Nebelung Cat", "Norwegian Forest Cat", "Ocicat Cat", "Oriental Cat", "Persian Cat", "Peterbald Cat", "Pixie-bob Cat", "Ragamuffin Cat",
-    "Ragdoll Cat", "Russian Blue Cat", "Savannah Cat", "Scottish Fold Cat", "Selkirk Rex Cat", "Siamese Cat", "Siberian Cat", "Singapura Cat", "Snowshoe Cat", "Somali Cat",
-    "Sphynx Cat", "Tonkinese Cat", "Toyger Cat", "Turkish Angora Cat", "Turkish Van Cat", "York Chocolate Cat", "Aegean Cat", "Asian Cat", "Australian Mist Cat", "Bambino Cat",
-    "Burmilla Cat", "California Spangled Cat", "Chantilly-Tiffany Cat", "Colorpoint Shorthair Cat", "Cheetoh Cat", "Donskoy Cat", "Dragon Li Cat", "Dwelf Cat", "Foldex Cat", "German Rex Cat",
-    "Highlander Cat", "Jungle Curl Cat", "Kanaani Cat", "Kinkalow Cat", "Korat Cat", "Lambkin Cat", "Minskin Cat", "Napoleon Cat", "Ojos Azules Cat", "Oriental Bicolor Cat",
-    "Oriental Longhair Cat", "Oriental Shorthair Cat", "Raas Cat", "Ragdoll Cat", "Russian White Cat", "Sam Sawet Cat", "Savannah Cat", "Scottish Fold Cat", "Selkirk Rex Cat", "Serengeti Cat",
-    "Sokoke Cat", "Suphalak Cat", "Thai Cat", "Thai Lilac Cat", "Tonkinese Cat", "Toyger Cat", "Turkish Angora Cat", "Turkish Van Cat", "Ukrainian Levkoy Cat", "York Chocolate Cat"
+  DESCRIPTORS = [
+    "Azure", "Golden", "Silver", "Shadow", "Crimson", "Emerald", "Ivory", "Obsidian",
+    "Storm", "Frost", "Dusky", "Bright", "Silent", "Wild", "Swift", "Ancient",
+    "Royal", "Noble", "Tiny", "Giant", "Spotted", "Striped", "Velvet", "Fluffy", "Violet",
+    "Curious", "Sleepy", "Happy", "Mischievous", "Gentle", "Brave"
   ]
+
+  ANIMALS = [
+    "Abyssinian Cat", "American Bobtail Cat", "American Curl Cat", "American Shorthair Cat",
+    "Balinese Cat", "Bengal Cat", "Birman Cat", "Bombay Cat", "British Shorthair Cat",
+    "Burmese Cat", "Chartreux Cat", "Cornish Rex Cat", "Devon Rex Cat", "Egyptian Mau Cat",
+    "Exotic Shorthair Cat", "Havana Brown Cat", "Himalayan Cat", "Japanese Bobtail Cat",
+    "Korat Cat", "LaPerm Cat", "Lykoi Cat", "Maine Coon Cat", "Manx Cat", "Munchkin Cat",
+    "Nebelung Cat", "Norwegian Forest Cat", "Ocicat Cat", "Oriental Cat", "Persian Cat",
+    "Pixie-bob Cat", "Ragamuffin Cat", "Ragdoll Cat", "Russian Blue Cat", "Savannah Cat",
+    "Scottish Fold Cat", "Selkirk Rex Cat", "Siamese Cat", "Siberian Cat", "Singapura Cat",
+    "Snowshoe Cat", "Somali Cat", "Sphynx Cat", "Tonkinese Cat", "Toyger Cat",
+    "Turkish Angora Cat", "Turkish Van Cat",
+
+    "Golden Retriever Dog", "Labrador Retriever Dog", "German Shepherd Dog",
+    "Border Collie Dog", "Shiba Inu Dog", "Akita Dog", "Corgi Dog", "Dalmatian Dog",
+    "Husky Dog", "Samoyed Dog", "Greyhound Dog", "Beagle Dog", "Poodle Dog",
+    "Chihuahua Dog", "Doberman Dog", "Boxer Dog", "Rottweiler Dog",
+
+    "Parakeet", "Cockatiel", "Cockatoo", "Macaw", "Canary", "Finch", "Lovebird",
+    "African Grey Parrot",
+
+    "Hamster", "Gerbil", "Guinea Pig", "Ferret", "Chinchilla", "Fancy Rat",
+
+    "Ball Python", "Corn Snake", "Leopard Gecko", "Crested Gecko", "Bearded Dragon",
+    "Blue Tongue Skink",
+
+    "Goldfish", "Betta Fish", "Guppy Fish", "Angelfish", "Tetra Fish", "Koi Fish"
+  ]
+
+  ANONYMOUS_NAMES =
+    DESCRIPTORS
+      .product(ANIMALS)
+      .map { |d, a| "#{d} #{a}" }
+      .shuffle
+      .first 1000
+      .freeze
 
   def initialize(bot, debouncer, storage)
     FFXIVVenues::Ident.new bot, storage
@@ -29,7 +59,7 @@ class Anonymise
     @bot = bot
     @debouncer = debouncer
     @storage = storage
-    @name_seed = rand(0..ANOMYMOUS_NAMES.length)
+    @name_seed = rand(0..ANONYMOUS_NAMES.length)
 
     @channels_to_anonymise = @storage.read CHANNELS_FOR_ANONYMITY_FILE_NAME
     @previous_anchors = @storage.read PREVIOUS_ANCHORS_FILE_NAME
@@ -120,7 +150,7 @@ class Anonymise
 
     Discordrb::LOGGER.info "Processing 'anonymise' modal submission"
 
-    event.respond content: "Your message has been posted! 🥰", ephemeral: true
+    confirm_message = event.respond content: "Your message is being been posted! 🥰", ephemeral: true
 
     message_content = event.value 'message_content'
     message_content = message_content.gsub "@", ""
@@ -178,7 +208,7 @@ class Anonymise
   def on_message(event)
     channel_id = event.channel.id
     content = @channels_to_anonymise[channel_id]
-    return unless config
+    return if content.nil?
 
     Discordrb::LOGGER.info "Message received on anonymised channel #{channel_id}"
 
@@ -190,7 +220,7 @@ class Anonymise
   private
 
   def get_anonymous_name(user_id)
-    ANOMYMOUS_NAMES[(user_id + @name_seed) % ANOMYMOUS_NAMES.length]
+    ANONYMOUS_NAMES[(user_id + @name_seed) % ANONYMOUS_NAMES.length]
   end
 
   def send_anchor_message(content, channel)
