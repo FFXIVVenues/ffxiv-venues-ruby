@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_relative 'ident'
 
 module FFXIVVenues
 
@@ -8,6 +7,7 @@ class Anonymise
 
   CHANNELS_FOR_ANONYMITY_FILE_NAME = 'anonymous.channels_to_anon'
   PREVIOUS_ANCHORS_FILE_NAME = 'anonymous.previous_anchors'
+  MESSAGE_LOG_FILE_NAME = 'anonymous.message_log'
   DESCRIPTORS = [
     "Azure", "Golden", "Silver", "Shadow", "Crimson", "Emerald", "Ivory", "Obsidian",
     "Storm", "Frost", "Dusky", "Bright", "Silent", "Wild", "Swift", "Ancient",
@@ -52,8 +52,6 @@ class Anonymise
       .freeze
 
   def initialize(bot, debouncer, storage)
-    FFXIVVenues::Ident.new bot, storage
-
     Discordrb::LOGGER.info "Initializing command 'anonymise'"
 
     @bot = bot
@@ -67,8 +65,12 @@ class Anonymise
     @bot.register_application_command :anonymise, "Enable anonymous interactions in this channel.", default_permission: false do |interaction|
       interaction.string "anchor_content", "The text content of the anchored message.", required: false
     end
+    @bot.register_application_command :ident, "Identify a message sent through anonymous interaction.", default_permission: false do |interaction|
+      interaction.string "message_id", "The ID of the anonymous message.", required: true
+    end
 
     @bot.application_command :anonymise, &method(:on_command)
+    @bot.application_command :ident, &method(:on_ident_command)
     @bot.modal_submit &method(:on_setup_modal_submit)
     @bot.modal_submit &method(:on_message_modal_submit)
     @bot.button &method(:on_anon_message_click)
@@ -118,6 +120,31 @@ class Anonymise
     end
   end
 
+  def on_ident_command(event)
+    Discordrb::LOGGER.info "Executing application command 'ident'"
+
+    if event.server.nil?
+      event.respond content: "This command cannot be used in DMs.", ephemeral: true
+      return
+    end
+
+    map = @storage.read MESSAGE_LOG_FILE_NAME
+    message_id = event.options["message_id"].to_i
+    entry = map[message_id]
+
+    if entry.nil?
+      event.respond content: "Couldn't find an author for that message id.", ephemeral: true
+      return
+    end
+
+    if entry[:guild_id] != event.server_id
+      event.respond content: "That message was not posted in this server.", ephemeral: true
+      return
+    end
+
+    event.respond content: "Message was authored by <@#{entry[:user_id]}>.", ephemeral: true
+  end
+
   def on_setup_modal_submit(event)
     return unless event.custom_id == 'anonymous_setup_modal'
 
@@ -164,7 +191,7 @@ class Anonymise
         end
       end
     )
-    save_to_log message.id, user
+    save_to_log message.id, user, event.server_id
 
     @debouncer.debounce("anonymise_" + channel_id.to_s, 60) do
       send_anchor_message content, event.channel
@@ -248,8 +275,8 @@ class Anonymise
     @storage.write CHANNELS_FOR_ANONYMITY_FILE_NAME, @channels_to_anonymise
   end
 
-  def save_to_log(message_id, user_id)
-    @storage.append Ident::ANONYMOUS_LOG_FILE_NAME, { message_id => user_id }
+  def save_to_log(message_id, user_id, guild_id)
+    @storage.append MESSAGE_LOG_FILE_NAME, { message_id => { user_id: user_id, guild_id: guild_id } }
   end
 
 end
