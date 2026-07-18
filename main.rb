@@ -10,6 +10,7 @@ require_relative 'commands/anonymise'
 require_relative 'commands/anchoring'
 require_relative 'commands/auto_threading'
 require_relative 'commands/minesweep'
+require_relative 'commands/honeypot'
 
 Dotenv.load ".env"
 
@@ -40,6 +41,7 @@ FFXIVVenues::Anchoring.new bot, debouncer, storage
 FFXIVVenues::AutoThreading.new bot, storage
 FFXIVVenues::Random.new bot
 FFXIVVenues::Minesweep.new bot
+FFXIVVenues::Honeypot.new bot, storage
 
 bot.ready do
   Discordrb::LOGGER.info "Ruby is online!"
